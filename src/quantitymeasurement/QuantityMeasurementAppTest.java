@@ -1,4 +1,4 @@
-package quantity_measurement_uc1;
+package com.apps.quantitymeasurement;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
