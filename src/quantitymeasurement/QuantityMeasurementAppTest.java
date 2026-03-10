@@ -1,11 +1,14 @@
-package quantity_measurement_uc3;
+package com.apps.quantitymeasurement;
 
 import org.junit.jupiter.api.Test;
+
+import com.apps.quantitymeasurement.Length.LengthUnit;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class QuantityMeasurementAppTest {
-
-    @Test
+class QuantityMeasurementAppTest {
+	
+	@Test
     void testEquality_FeetToFeet_SameValue() {
         Length l1 = new Length(1.0, LengthUnit.FEET);
         Length l2 = new Length(1.0, LengthUnit.FEET);
@@ -64,4 +67,5 @@ public class QuantityMeasurementAppTest {
         assertThrows(IllegalArgumentException.class, () ->
                 new Length(1.0, null));
     }
+    
 }
