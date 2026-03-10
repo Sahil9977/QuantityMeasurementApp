@@ -1,7 +1,11 @@
-package quantity_measurement_uc4;
-
+package com.apps.quantitymeasurement;
 
 import org.junit.jupiter.api.Test;
+
+import com.apps.quantitymeasurement.Length.LengthUnit;
+
+import quantity_measurement_uc4.Length;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityMeasurementAppTest {
