@@ -31,6 +31,15 @@ public class QuantityMeasurementApp {
 
         System.out.println(length + " = " + converted);
     }
+    
+    
+    public static Length demonstrateLengthAddition(Length length1, Length length2) {
+
+        if (length1 == null || length2 == null)
+            throw new IllegalArgumentException("Lengths cannot be null");
+
+        return length1.add(length2);
+    }
 
     public static void main(String[] args) {
 
@@ -54,5 +63,25 @@ public class QuantityMeasurementApp {
 
         demonstrateLengthConversion(new Length(2.0, LengthUnit.YARDS),
                 LengthUnit.INCHES);
+        
+        // additionn demonstation
+        
+        Length result1 = demonstrateLengthAddition(
+                new Length(1.0, LengthUnit.FEET),
+                new Length(12.0, LengthUnit.INCHES));
+
+        System.out.println("1 FEET + 12 INCHES = " + result1);
+
+        Length result2 = demonstrateLengthAddition(
+                new Length(12.0, LengthUnit.INCHES),
+                new Length(1.0, LengthUnit.FEET));
+
+        System.out.println("12 INCHES + 1 FEET = " + result2);
+
+        Length result3 = demonstrateLengthAddition(
+                new Length(1.0, LengthUnit.YARDS),
+                new Length(3.0, LengthUnit.FEET));
+
+        System.out.println("1 YARD + 3 FEET = " + result3);
     }
 }

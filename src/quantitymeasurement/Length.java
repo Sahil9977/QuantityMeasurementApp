@@ -10,9 +10,9 @@ public class Length {
   
     public enum LengthUnit {
 
-        FEET(12.0),       
+        FEET(12.0),       // 1 feet = 12 inch 
         INCHES(1.0),        
-        YARDS(36.0),        
+        YARDS(36.0),        // 1 yard = 36 inch 
         CENTIMETRES(0.393701); 
 
         private final double conversionFactor;
@@ -40,7 +40,8 @@ public class Length {
         this.value = value;
         this.unit = unit;
     }
-
+    
+    // base unit is in inch coz we have define the value as per inchlike 1 feet = 12 inch 1 yard = 36 inch like that
     public double convertToBaseUnit() {
         return this.value * this.unit.getConversionFactor();
     }
@@ -70,6 +71,20 @@ public class Length {
 
         return new Length(convertedValue, targetUnit);
     }
+    
+    
+    public Length add(Length other) {
+    	
+    	if(other ==null) throw new IllegalArgumentException("length can not be null");
+    	
+    	double value1 = this.convertToBaseUnit();
+    	double value2 = other.convertToBaseUnit();
+    	
+    	double sum = value1 + value2;
+    	double converted = sum/this.unit.getConversionFactor();
+    	
+    	return new Length(converted , this.unit);
+    }
 
 
     @Override
@@ -92,6 +107,10 @@ public class Length {
         return Double.hashCode(this.convertToBaseUnit());
     }
 
+    @Override
+    public String toString() {
+        return "Quantity(" + value + ", " + unit + ")";
+    }
 
     public static void main(String[] args) {
 
@@ -104,5 +123,9 @@ public class Length {
         double result = Length.convert(1.0, LengthUnit.FEET, LengthUnit.INCHES);
 
         System.out.println("Converted: 1 FEET  to " + result + " INCHES");
+        
+        System.out.println(length1.add(length2));
+        
+        
     }
 }
