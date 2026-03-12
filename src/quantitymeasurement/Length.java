@@ -2,35 +2,11 @@ package com.apps.quantitymeasurement;
 
 public class Length {
 
-   
     private double value;
-
     private LengthUnit unit;
-
-  
-    public enum LengthUnit {
-
-        FEET(12.0),       
-        INCHES(1.0),        
-        YARDS(36.0),        
-        CENTIMETRES(0.393701); 
-
-        private final double conversionFactor;
-
-        LengthUnit(double conversionFactor) {
-            this.conversionFactor = conversionFactor;
-        }
-
-     
-        public double getConversionFactor() {
-            return conversionFactor;
-        }
-    }
-
 
     public Length(double value, LengthUnit unit) {
 
-      
         if (unit == null)
             throw new IllegalArgumentException("Unit cannot be null");
 
@@ -41,11 +17,11 @@ public class Length {
         this.unit = unit;
     }
 
+    // base unit is in inch coz we have define the value as per inchlike 1 feet = 12 inch 1 yard = 36 inch like that
     public double convertToBaseUnit() {
-        return this.value * this.unit.getConversionFactor();
+        return this.unit.convertToBaseUnit(this.value);
     }
 
- 
     public static double convert(double value, LengthUnit source, LengthUnit target) {
 
         if (!Double.isFinite(value))
@@ -54,23 +30,52 @@ public class Length {
         if (source == null || target == null)
             throw new IllegalArgumentException("Units cannot be null");
 
-        //convert source value to base unit
-        double baseValue = value * source.getConversionFactor();
+        double baseValue = source.convertToBaseUnit(value);
 
-        //  convert base unit to target unit
-        double result = baseValue / target.getConversionFactor();
-
-        return result;
+        return target.convertFromBaseUnit(baseValue);
     }
-
 
     public Length convertTo(LengthUnit targetUnit) {
 
-        double convertedValue = convert(this.value, this.unit, targetUnit);
+        double baseValue = this.unit.convertToBaseUnit(this.value);
+
+        double convertedValue = targetUnit.convertFromBaseUnit(baseValue);
 
         return new Length(convertedValue, targetUnit);
     }
 
+    public Length add(Length other) {
+
+        if (other == null)
+            throw new IllegalArgumentException("Length cannot be null");
+
+        double value1 = this.unit.convertToBaseUnit(this.value);
+        double value2 = other.unit.convertToBaseUnit(other.value);
+
+        double sum = value1 + value2;
+
+        double converted = this.unit.convertFromBaseUnit(sum);
+
+        return new Length(converted, this.unit);
+    }
+
+    public Length add(Length other, LengthUnit targetUnit) {
+
+        if (other == null)
+            throw new IllegalArgumentException("Length cannot be null");
+
+        if (targetUnit == null)
+            throw new IllegalArgumentException("Unit cannot be null");
+
+        double value1 = this.unit.convertToBaseUnit(this.value);
+        double value2 = other.unit.convertToBaseUnit(other.value);
+
+        double sum = value1 + value2;
+
+        double converted = targetUnit.convertFromBaseUnit(sum);
+
+        return new Length(converted, targetUnit);
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -83,26 +88,19 @@ public class Length {
 
         Length other = (Length) obj;
 
-        return Math.abs(this.convertToBaseUnit() - other.convertToBaseUnit()) <= 0.001;
+        return Math.abs(
+                this.unit.convertToBaseUnit(this.value) -
+                other.unit.convertToBaseUnit(other.value)
+        ) <= 0.001;
     }
-
 
     @Override
     public int hashCode() {
-        return Double.hashCode(this.convertToBaseUnit());
+        return Double.hashCode(this.unit.convertToBaseUnit(this.value));
     }
 
-
-    public static void main(String[] args) {
-
-        Length length1 = new Length(1.0, LengthUnit.FEET);
-        Length length2 = new Length(12.0, LengthUnit.INCHES);
-
-        System.out.println("Are lengths equal? " + length1.equals(length2));
-
-      
-        double result = Length.convert(1.0, LengthUnit.FEET, LengthUnit.INCHES);
-
-        System.out.println("Converted: 1 FEET  to " + result + " INCHES");
+    @Override
+    public String toString() {
+        return "Quantity(" + value + ", " + unit + ")";
     }
 }
