@@ -1,58 +1,179 @@
 package com.apps.quantitymeasurement;
 
-import com.apps.quantitymeasurement.Length.LengthUnit;
-
 public class QuantityMeasurementApp {
 
-   
-    public static void demonstrateLengthComparison(Length l1, Length l2) {
+	// comparison
+	public static <U extends IMeasurable> void demonstrateComparison(Quantity<U> q1, Quantity<U> q2) {
+// static method isiliye yaha <U extends IMea > ye sab likhna pada nhi agar non static hota toh direct clas  ko genric banake work ho jata 
+		boolean result = q1.equals(q2);
 
-        boolean result = l1.equals(l2);
+		System.out.println("Output: Equal(" + result + ")");
+	}
 
-        System.out.println("Output: Equal(" + result + ")");
-    }
+	// conversion
+	public static <U extends IMeasurable> void demonstrateConversion(Quantity<U> quantity, U targetUnit) {
 
-    
-    public static void demonstrateLengthConversion(double value,
-                                                   LengthUnit from,
-                                                   LengthUnit to) {
+		Quantity<U> converted = quantity.convertTo(targetUnit);
 
-        double result = Length.convert(value, from, to);
+		System.out.println(quantity + " = " + converted);
+	}
 
-        System.out.println(value + " " + from + " = " + result + " " + to);
-    }
+	// addition
+	public static <U extends IMeasurable> Quantity<U> demonstrateAddition(Quantity<U> q1, Quantity<U> q2) {
 
+		if (q1 == null || q2 == null)
+			throw new IllegalArgumentException("Quantities cannot be null");
 
-    
-    public static void demonstrateLengthConversion(Length length,
-                                                   LengthUnit targetUnit) {
+		return q1.add(q2);
+	}
 
-        Length converted = length.convertTo(targetUnit);
+	// addition with target unit
+	public static <U extends IMeasurable> Quantity<U> demonstrateAddition(Quantity<U> q1, Quantity<U> q2,
+			U targetUnit) {
 
-        System.out.println(length + " = " + converted);
-    }
+		if (q1 == null || q2 == null)
+			throw new IllegalArgumentException("Quantities cannot be null");
 
-    public static void main(String[] args) {
+		return q1.add(q2, targetUnit);
+	}
 
-        // Equality demonstrations
-        demonstrateLengthComparison(
-                new Length(1.0, LengthUnit.FEET),
-                new Length(12.0, LengthUnit.INCHES));
+	// subtraction
+	public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(Quantity<U> q1, Quantity<U> q2) {
 
-        demonstrateLengthComparison(
-                new Length(1.0, LengthUnit.YARDS),
-                new Length(36.0, LengthUnit.INCHES));
+		if (q1 == null || q2 == null)
+			throw new IllegalArgumentException("Quantities cannot be null");
 
-        demonstrateLengthComparison(
-                new Length(100.0, LengthUnit.CENTIMETRES),
-                new Length(39.3701, LengthUnit.INCHES));
+		return q1.subtract(q2);
+	}
 
-        // Conversion demonstrations
-        demonstrateLengthConversion(1.0, LengthUnit.FEET, LengthUnit.INCHES);
+	// subtraction with target unit
+	public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(Quantity<U> q1, Quantity<U> q2,
+			U targetUnit) {
 
-        demonstrateLengthConversion(3.0, LengthUnit.YARDS, LengthUnit.FEET);
+		if (q1 == null || q2 == null)
+			throw new IllegalArgumentException("Quantities cannot be null");
 
-        demonstrateLengthConversion(new Length(2.0, LengthUnit.YARDS),
-                LengthUnit.INCHES);
-    }
+		return q1.subtract(q2, targetUnit);
+	}
+
+	// divison
+	private static <U extends IMeasurable> double demonstrateDivision(Quantity<U> q1, Quantity<U> q2) {
+
+		if (q1 == null || q2 == null)
+			throw new IllegalArgumentException("Quantities cannot be null");
+
+		return q1.divide(q2);
+	}
+
+	public static void main(String[] args) {
+
+		// LENGTH
+		System.out.println("LENGTH ");
+		Quantity<LengthUnit> l1 = new Quantity<>(1.0, LengthUnit.FEET);
+		Quantity<LengthUnit> l2 = new Quantity<>(12.0, LengthUnit.INCHES);
+
+		demonstrateComparison(l1, l2);
+		demonstrateConversion(l1, LengthUnit.YARDS);
+
+		System.out.println("Addition: " + demonstrateAddition(l1, l2));
+		System.out.println("Target Addition: " + demonstrateAddition(l1, l2, LengthUnit.YARDS));
+
+		System.out.println("Subtraction: " + demonstrateSubtraction(l1, l2));
+		System.out.println("Target Subtraction: " + demonstrateSubtraction(l1, l2, LengthUnit.FEET));
+
+		double ratio1 = demonstrateDivision(l1, l2);
+
+		if (ratio1 > 1.0)
+			System.out.println("First is larger");
+		else if (ratio1 < 1.0)
+			System.out.println("Second is larger");
+		else
+			System.out.println("Both are equivalent");
+
+		// WEIGHT
+		System.out.println("\nWEIGHT ");
+		Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+		Quantity<WeightUnit> w2 = new Quantity<>(1000.0, WeightUnit.GRAM);
+
+		demonstrateComparison(w1, w2);
+		demonstrateConversion(w1, WeightUnit.POUND);
+
+		System.out.println("Addition: " + demonstrateAddition(w1, w2));
+		System.out.println("Target Addition: " + demonstrateAddition(w1, w2, WeightUnit.KILOGRAM));
+
+		System.out.println("Subtraction: " + demonstrateSubtraction(w1, w2));
+		System.out.println("Target Subtraction: " + demonstrateSubtraction(w1, w2, WeightUnit.GRAM));
+
+		double ratio2 = demonstrateDivision(w1, w2);
+
+		if (ratio2 > 1.0)
+			System.out.println("First is larger");
+		else if (ratio2 < 1.0)
+			System.out.println("Second is larger");
+		else
+			System.out.println("Both are equivalent");
+
+		// VOLUME
+		System.out.println("\nVOLUME ");
+		Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.GALLON);
+		Quantity<VolumeUnit> v2 = new Quantity<>(3.785, VolumeUnit.LITRE);
+
+		demonstrateComparison(v1, v2);
+		demonstrateConversion(v1, VolumeUnit.MILLILITRE);
+
+		System.out.println("Addition: " + demonstrateAddition(v1, v2));
+		System.out.println("Target Addition: " + demonstrateAddition(v1, v2, VolumeUnit.LITRE));
+
+		System.out.println("Subtraction: " + demonstrateSubtraction(v1, v2));
+		System.out.println("Target Subtraction: " + demonstrateSubtraction(v1, v2, VolumeUnit.LITRE));
+
+		double ratio3 = demonstrateDivision(v1, v2);
+
+		if (ratio3 > 1.0)
+			System.out.println("First is larger");
+		else if (ratio3 < 1.0)
+			System.out.println("Second is larger");
+		else
+			System.out.println("Both are equivalent");
+		
+		
+		// TEMPERATURE
+		System.out.println("\nTEMPERATURE");
+
+		// Equality
+		Quantity<TemperatureUnit> t1 = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+		Quantity<TemperatureUnit> t2 = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
+		demonstrateComparison(t1, t2);  // true - 0°C = 32°F
+
+		Quantity<TemperatureUnit> t3 = new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+		Quantity<TemperatureUnit> t4 = new Quantity<>(212.0, TemperatureUnit.FAHRENHEIT);
+		demonstrateComparison(t3, t4);  // true - 100°C = 212°F
+
+		// Conversion
+		demonstrateConversion(t3, TemperatureUnit.FAHRENHEIT);  // 100°C → 212°F
+		demonstrateConversion(t2, TemperatureUnit.CELSIUS);     // 32°F → 0°C
+
+		// Unsupported operations - show error handling
+		System.out.println("\nUnsupported Operations:");
+
+		try {
+		    t1.add(t3);
+		} catch (UnsupportedOperationException e) {
+		    System.out.println("Add failed: " + e.getMessage());
+		}
+
+		try {
+		    t1.subtract(t3);
+		} catch (UnsupportedOperationException e) {
+		    System.out.println("Subtract failed: " + e.getMessage());
+		}
+
+		try {
+		    t1.divide(t3);
+		} catch (UnsupportedOperationException e) {
+		    System.out.println("Divide failed: " + e.getMessage());
+		}
+
+	}
+
 }
