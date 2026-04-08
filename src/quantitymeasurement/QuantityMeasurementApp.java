@@ -1,58 +1,109 @@
 package com.apps.quantitymeasurement;
 
-import com.apps.quantitymeasurement.Length.LengthUnit;
+import com.apps.quantitymeasurement.controller.QuantityMeasurementController;
+import com.apps.quantitymeasurement.DTO.QuantityDTO;
+import com.apps.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
+import com.apps.quantitymeasurement.service.IQuantityMeasurementService;
+import com.apps.quantitymeasurement.service.QuantityMeasurementServiceImpl;
+
 
 public class QuantityMeasurementApp {
 
-   
-    public static void demonstrateLengthComparison(Length l1, Length l2) {
+	// ── Factory methods ───────────────────────────────────────────────────────
 
-        boolean result = l1.equals(l2);
+	private static QuantityMeasurementCacheRepository createRepository() {
+		return QuantityMeasurementCacheRepository.getInstance();
+	}
 
-        System.out.println("Output: Equal(" + result + ")");
-    }
+	private static IQuantityMeasurementService createService(QuantityMeasurementCacheRepository repository) {
+		return new QuantityMeasurementServiceImpl(repository);
+	}
 
-    
-    public static void demonstrateLengthConversion(double value,
-                                                   LengthUnit from,
-                                                   LengthUnit to) {
+	private static QuantityMeasurementController createController(IQuantityMeasurementService service) {
+		return new QuantityMeasurementController(service);
+	}
 
-        double result = Length.convert(value, from, to);
+	// ── Entry point ───────────────────────────────────────────────────────────
 
-        System.out.println(value + " " + from + " = " + result + " " + to);
-    }
+	public static void main(String[] args) {
 
+		QuantityMeasurementCacheRepository repository = createRepository();
+		IQuantityMeasurementService service = createService(repository);
+		QuantityMeasurementController controller = createController(service);
 
-    
-    public static void demonstrateLengthConversion(Length length,
-                                                   LengthUnit targetUnit) {
+		runDemonstrations(controller);
 
-        Length converted = length.convertTo(targetUnit);
+		// Show persisted history
+		System.out.println("\n── Repository History (" + repository.findAll().size() + " records) ──");
+		repository.findAll().forEach(System.out::println);
+	}
 
-        System.out.println(length + " = " + converted);
-    }
+	// ── All demonstrations delegated to controller ────────────────────────────
 
-    public static void main(String[] args) {
+	private static void runDemonstrations(QuantityMeasurementController controller) {
 
-        // Equality demonstrations
-        demonstrateLengthComparison(
-                new Length(1.0, LengthUnit.FEET),
-                new Length(12.0, LengthUnit.INCHES));
+		// ── LENGTH ────────────────────────────────────────────────────────────
+		System.out.println("\n═══ LENGTH ═══");
 
-        demonstrateLengthComparison(
-                new Length(1.0, LengthUnit.YARDS),
-                new Length(36.0, LengthUnit.INCHES));
+		QuantityDTO l1 = new QuantityDTO(1.0, "FEET", "LENGTH");
+		QuantityDTO l2 = new QuantityDTO(12.0, "INCHES", "LENGTH");
+		QuantityDTO l3 = new QuantityDTO(0.0, "YARDS", "LENGTH"); // target unit placeholder
 
-        demonstrateLengthComparison(
-                new Length(100.0, LengthUnit.CENTIMETRES),
-                new Length(39.3701, LengthUnit.INCHES));
+		controller.performComparison(l1, l2);
+		controller.performConversion(l1, l3);
+		controller.performAddition(l1, l2);
+		controller.performSubtraction(l1, l2);
+		controller.performDivision(l1, l2);
 
-        // Conversion demonstrations
-        demonstrateLengthConversion(1.0, LengthUnit.FEET, LengthUnit.INCHES);
+		// ── WEIGHT ────────────────────────────────────────────────────────────
+		System.out.println("\n═══ WEIGHT ═══");
 
-        demonstrateLengthConversion(3.0, LengthUnit.YARDS, LengthUnit.FEET);
+		QuantityDTO w1 = new QuantityDTO(1.0, "KILOGRAM", "WEIGHT");
+		QuantityDTO w2 = new QuantityDTO(1000.0, "GRAM", "WEIGHT");
+		QuantityDTO w3 = new QuantityDTO(0.0, "POUND", "WEIGHT"); // target unit
 
-        demonstrateLengthConversion(new Length(2.0, LengthUnit.YARDS),
-                LengthUnit.INCHES);
-    }
+		controller.performComparison(w1, w2);
+		controller.performConversion(w1, w3);
+		controller.performAddition(w1, w2);
+		controller.performSubtraction(w1, w2);
+		controller.performDivision(w1, w2);
+
+		// ── VOLUME ────────────────────────────────────────────────────────────
+		System.out.println("\n═══ VOLUME ═══");
+
+		QuantityDTO v1 = new QuantityDTO(1.0, "GALLON", "VOLUME");
+		QuantityDTO v2 = new QuantityDTO(3.785, "LITRE", "VOLUME");
+		QuantityDTO v3 = new QuantityDTO(0.0, "MILLILITRE", "VOLUME"); // target unit
+
+		controller.performComparison(v1, v2);
+		controller.performConversion(v1, v3);
+		controller.performAddition(v1, v2);
+		controller.performSubtraction(v1, v2);
+		controller.performDivision(v1, v2);
+
+		// ── TEMPERATURE ───────────────────────────────────────────────────────
+		System.out.println("\n═══ TEMPERATURE ═══");
+
+		QuantityDTO t1 = new QuantityDTO(0.0, "CELSIUS", "TEMPERATURE");
+		QuantityDTO t2 = new QuantityDTO(32.0, "FAHRENHEIT", "TEMPERATURE");
+		QuantityDTO t3 = new QuantityDTO(100.0, "CELSIUS", "TEMPERATURE");
+		QuantityDTO t4 = new QuantityDTO(212.0, "FAHRENHEIT", "TEMPERATURE");
+		QuantityDTO t5 = new QuantityDTO(0.0, "FAHRENHEIT", "TEMPERATURE"); // target unit
+
+		controller.performComparison(t1, t2); // 0°C == 32°F → true
+		controller.performComparison(t3, t4); // 100°C == 212°F → true
+		controller.performConversion(t3, t5); // 100°C → 212°F
+		controller.performConversion(t2, t1); // 32°F → 0°C
+
+		System.out.println("\n── Unsupported Temperature Operations ──");
+		controller.performAddition(t1, t3); // should show error
+		controller.performSubtraction(t1, t3); // should show error
+		controller.performDivision(t1, t3); // should show error
+
+		// ── CROSS-CATEGORY PREVENTION ─────────────────────────────────────────
+		System.out.println("\n── Cross-Category Prevention ──");
+		QuantityDTO len = new QuantityDTO(1.0, "FEET", "LENGTH");
+		QuantityDTO tmp = new QuantityDTO(1.0, "CELSIUS", "TEMPERATURE");
+		controller.performAddition(len, tmp); // should show error
+	}
 }
