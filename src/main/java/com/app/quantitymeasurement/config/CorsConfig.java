@@ -16,7 +16,8 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
             "http://localhost:5173",   // Vite dev server
-            "http://localhost:3000"    // alternate frontend port
+            "http://localhost:3000" ,   // alternate frontend port
+            "https://quantity-measurement-app-frontend-beta-one.vercel.app"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
