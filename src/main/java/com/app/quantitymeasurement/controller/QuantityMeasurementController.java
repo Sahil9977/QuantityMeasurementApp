@@ -4,6 +4,7 @@ import com.app.quantitymeasurement.model.QuantityInputDTO;
 import com.app.quantitymeasurement.model.QuantityMeasurementDTO;
 import com.app.quantitymeasurement.service.IQuantityMeasurementService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -16,7 +17,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/quantities")
-@Tag(name = "Quantity Measurements", description = "REST API for quantity measurement operations")
+@Tag(name = "Quantity Measurements", description = "REST API for quantity measurement operations — JWT required")
+@SecurityRequirement(name = "bearerAuth")
 public class QuantityMeasurementController {
 
     private static final Logger logger = LoggerFactory.getLogger(QuantityMeasurementController.class);
