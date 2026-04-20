@@ -40,7 +40,7 @@ public class OAuth2AuthenticationSuccessHandler
     private JwtUtil jwtUtil;
 
     /** Where to redirect the browser after OAuth2 success (configured in properties) */
-    @Value("${app.oauth2.redirect-uri:http://localhost:5173/oauth2/callback}")
+    @Value("${app.oauth2.redirect-uri:https://quantity-measurement-app-frontend-beta-one.vercel.app//oauth2/callback}")
     private String redirectUri;
 
     @Override

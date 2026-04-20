@@ -25,7 +25,7 @@ public class OAuth2AuthenticationFailureHandler
     private static final Logger log =
             LoggerFactory.getLogger(OAuth2AuthenticationFailureHandler.class);
 
-    @Value("${app.oauth2.redirect-uri:http://localhost:5173/oauth2/callback}")
+    @Value("${app.oauth2.redirect-uri:https://quantity-measurement-app-frontend-beta-one.vercel.app/oauth2/callback}")
     private String redirectUri;
 
     @Override
